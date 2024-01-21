@@ -8,15 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import database.MyDatabase;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import java.awt.Image;
-
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
@@ -38,8 +36,10 @@ public class LoginGui extends JFrame {
 
 	/**
 	 * Launch the application.
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		new LoginGui().setVisible(true);
 		
 	}
@@ -47,7 +47,9 @@ public class LoginGui extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public LoginGui() {
+	Connection conn = null;
+	public LoginGui() throws ClassNotFoundException, SQLException {
+		conn = MyDatabase.doConnection();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1227, 569);
 		contentPane = new JPanel();
@@ -90,10 +92,9 @@ public class LoginGui extends JFrame {
 		btnLogin.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
 				try {
 						String sql = "SELECT StaffID FROM staff WHERE StaffID=? AND StaffPass=?";
-						Connection conn = MyDatabase.doConnection();
+						
 					  
 					    PreparedStatement preparedStatement = conn.prepareStatement(sql);
 					    
@@ -109,15 +110,15 @@ public class LoginGui extends JFrame {
 						if(count == 1)
 						{
 							// when login button is press. it will go to staff Home page
-							StaffHomepageGui frame = new StaffHomepageGui();
-							frame.setVisible(true);
-							dispose();
+							//StaffHomepageGui frame = new StaffHomepageGui();
+							//frame.setVisible(true);
+							//dispose();
 						}else if(count > 1)
 						{
-							JOptionPane.showMessageDialog(null,"Duplicate StaffId and password ");
+							JOptionPane.showMessageDialog(null,"Duplicate Email or password ");
 						}else
 						{
-							JOptionPane.showMessageDialog(null,"StaffId or password is incorrect");
+							JOptionPane.showMessageDialog(null,"Email or password is incorrect");
 						}
 					   
 						resultSet.close();
@@ -127,20 +128,39 @@ public class LoginGui extends JFrame {
 			} catch (Exception u) {
 			    JOptionPane.showMessageDialog(null, e);
 			}
-	
-				
-			
 			}
 		});
 				
 				
-		btnLogin.setBounds(473, 363, 89, 23);
+		btnLogin.setBounds(485, 363, 89, 23);
 		contentPane.add(btnLogin);
 		
 		JButton btnSignUp = new JButton("Sign Up");
 		btnSignUp.setFont(new Font("Times New Roman", Font.BOLD, 15));
-		btnSignUp.setBounds(579, 363, 89, 23);
+		btnSignUp.setBounds(590, 363, 89, 23);
 		contentPane.add(btnSignUp);
+		
+		JButton btnNewButton = new JButton("Staff");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					StaffLoginGui frame = new StaffLoginGui();
+					frame.setVisible(true);
+					dispose();
+					
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+				
+			}
+		});
+		
+		btnNewButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		btnNewButton.setBounds(540, 397, 89, 23);
+		contentPane.add(btnNewButton);
 		
 		JLabel lblimagePerson = new JLabel("");
 		// remove C:\\Users\\dhaki\\OneDrive - Universiti Teknikal Malaysia Melaka\\Documents\\GitHub\\Car-Service-and-Repair-System\\OOP Project\\
@@ -155,6 +175,9 @@ public class LoginGui extends JFrame {
 		lblTayar.setIcon(new ImageIcon("C:\\\\Users\\\\dhaki\\\\OneDrive - Universiti Teknikal Malaysia Melaka\\\\Documents\\\\GitHub\\\\Car-Service-and-Repair-System\\\\OOP Project\\\\images\\\\4 tayars.png"));
 		lblTayar.setBounds(253, 101, 287, 398);
 		contentPane.add(lblTayar);
+		
+		
+		
 		
 		
 	}
