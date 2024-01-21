@@ -6,6 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="images"/>
 	<classpathentry kind="lib" path="C:/Users/dhaki/OneDrive - Universiti Teknikal Malaysia Melaka/Documents/UTeM/Sem 3/OOP/Project/mysql-connector-java-5.1.22.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
