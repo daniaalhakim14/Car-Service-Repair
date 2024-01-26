@@ -162,11 +162,31 @@ public class StaffHomepageGui extends JFrame {
 		btnViewCancelledJobs.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		btnViewCancelledJobs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					CarServiceCancel frame = new CarServiceCancel();
+					frame.setVisible(true);
+					dispose();
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		btnViewCancelledJobs.setBounds(279, 286, 170, 23);
 		contentPane.add(btnViewCancelledJobs);
 		
+		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				StaffHomepageGui frame = new StaffHomepageGui();
+				frame.setVisible(true);
+				dispose();
+			}
+		});
+		btnBack.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		btnBack.setBounds(280, 373, 170, 23);
+		contentPane.add(btnBack);
 		
 		
 		JLabel lblimagePerson = new JLabel("Login");
@@ -183,6 +203,8 @@ public class StaffHomepageGui extends JFrame {
 		lblTayar.setIcon(new ImageIcon("C:\\\\Users\\\\dhaki\\\\OneDrive - Universiti Teknikal Malaysia Melaka\\\\Documents\\\\GitHub\\\\Car-Service-and-Repair-System\\\\OOP Project\\\\images\\\\4 tayars.png"));
 		lblTayar.setBounds(10, 42, 287, 398);
 		contentPane.add(lblTayar);
+		
+		
 
 	}
 	

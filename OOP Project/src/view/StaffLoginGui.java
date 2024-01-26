@@ -17,7 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
+import controller.LoginController;
+import controller.StaffController;
 import database.MyDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,9 +58,9 @@ public class StaffLoginGui extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	Connection conn = null;
+	
 	public StaffLoginGui() throws ClassNotFoundException, SQLException {
-		conn = MyDatabase.doConnection();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 744, 501);
 		contentPane = new JPanel();
@@ -101,44 +104,15 @@ public class StaffLoginGui extends JFrame {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-					try {
-							String sql = "SELECT StaffID FROM staff WHERE StaffID=? AND StaffPass=?";				  
-						    PreparedStatement preparedStatement = conn.prepareStatement(sql);
-							    
-						    preparedStatement.setString(1, txtStaffId.getText());
-						    preparedStatement.setString(2, txtPassword.getText());
-							    
-						    // Execute your query and process the result set if needed
-						    ResultSet resultSet = preparedStatement.executeQuery();
-							int count = 0 ;
-							while(resultSet.next()){
-								count = count + 1;
-								}
-							if(count == 1)
-							{
-								// when login button is press. it will go to staff Home page
-								StaffHomepageGui frame = new StaffHomepageGui();
-								frame.setVisible(true);
-								dispose();
-							}else if(count > 1)								{
-								JOptionPane.showMessageDialog(null,"Duplicate StaffId and password ");
-							}else
-							{
-								JOptionPane.showMessageDialog(null,"StaffId or password is incorrect");
-							}
-							   
-								resultSet.close();
-								preparedStatement.close();
-		
-					} catch (SQLException u) {
-					    JOptionPane.showMessageDialog(null, e);
-					} catch (Exception u) {
-					    JOptionPane.showMessageDialog(null, e);
-					}	
+				String staffID = txtStaffId.getText();
+				String staffPassword = txtPassword.getText();
+        		LoginController loginController = new LoginController();
+        		loginController.staffLogin(staffID, staffPassword);
+			
 			}
 		});
 		btnLogin.setFont(new Font("Times New Roman", Font.BOLD, 14));
-		btnLogin.setBounds(258, 282, 89, 23);
+		btnLogin.setBounds(363, 282, 89, 23);
 		contentPane.add(btnLogin);
 		
 		JButton btnBack = new JButton("Back");
@@ -157,7 +131,7 @@ public class StaffLoginGui extends JFrame {
 			}
 		});
 		btnBack.setFont(new Font("Times New Roman", Font.BOLD, 15));
-		btnBack.setBounds(363, 282, 89, 23);
+		btnBack.setBounds(258, 282, 89, 23);
 		contentPane.add(btnBack);
 	
 			

@@ -11,6 +11,9 @@ import database.MyDatabase;
 import javax.swing.*;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import controller.LoginController;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -93,52 +96,20 @@ public class LoginGui extends JFrame {
 		btnLogin.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-						String sql = "SELECT StaffID FROM staff WHERE StaffID=? AND StaffPass=?";
-						
-					  
-					    PreparedStatement preparedStatement = conn.prepareStatement(sql);
-					    
-					    preparedStatement.setString(1, txtEmail.getText());
-					    preparedStatement.setString(2, txtPassword.getText());
-					    
-					    // Execute your query and process the result set if needed
-					    ResultSet resultSet = preparedStatement.executeQuery();
-						int count = 0 ;
-						while(resultSet.next()){
-							count = count + 1;
-						}
-						if(count == 1)
-						{
-							// when login button is press. it will go to staff Home page
-							//StaffHomepageGui frame = new StaffHomepageGui();
-							//frame.setVisible(true);
-							//dispose();
-						}else if(count > 1)
-						{
-							JOptionPane.showMessageDialog(null,"Duplicate Email or password ");
-						}else
-						{
-							JOptionPane.showMessageDialog(null,"Email or password is incorrect");
-						}
-					   
-						resultSet.close();
-						preparedStatement.close();
-			} catch (SQLException u) {
-			    JOptionPane.showMessageDialog(null, e);
-			} catch (Exception u) {
-			    JOptionPane.showMessageDialog(null, e);
-			}
+			String Email =  txtEmail.getText();
+			String Password = txtPassword.getText();
+			LoginController loginController = new LoginController();
+    		loginController.customerLogin(Email, Password);
 			}
 		});
 				
 				
-		btnLogin.setBounds(258, 282, 89, 23);
+		btnLogin.setBounds(363, 282, 89, 23);
 		contentPane.add(btnLogin);
 		
 		JButton btnSignUp = new JButton("Sign Up");
 		btnSignUp.setFont(new Font("Times New Roman", Font.BOLD, 15));
-		btnSignUp.setBounds(363, 282, 89, 23);
+		btnSignUp.setBounds(258, 282, 89, 23);
 		contentPane.add(btnSignUp);
 		
 		JButton btnNewButton = new JButton("Staff");

@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import controller.StaffController;
 import database.MyDatabase;
 import javax.swing.JScrollBar;
 import javax.swing.JLabel;
@@ -49,6 +50,55 @@ public class CarServiceCancel extends JFrame {
         });
     }
      Connection conn=null;
+     
+     public void refreshTable() throws ClassNotFoundException, SQLException
+     {
+    	    DefaultTableModel dm = new DefaultTableModel() {
+    	        @Override
+    	        public Class<?> getColumnClass(int column) {
+    	            return (column == 8) ? Boolean.class : String.class;
+    	        }
+    	    };
+
+    	    String[] header = { "ServiceID", "CustID", "CarModel", "CarName", "DateOfAppointment", "Description",
+    	            "StaffID", "Status" };
+
+    	    String sqlQuery = "SELECT ServiceID, CustID, CarModel, CarName, DateOfAppointment, Description, StaffID, Status FROM car_service WHERE Status = 'CANCELLED'";
+
+    	    try (Connection conn = MyDatabase.doConnection();
+    	         PreparedStatement preparedStatement = conn.prepareStatement(sqlQuery);
+    	         ResultSet resultSet = preparedStatement.executeQuery()) {
+
+    	        List<Object[]> resultList = new ArrayList<>();
+
+    	        while (resultSet.next()) {
+    	            String serviceID = resultSet.getString("ServiceID");
+    	            String custID = resultSet.getString("CustID");
+    	            String carModel = resultSet.getString("CarModel");
+    	            String carName = resultSet.getString("CarName");
+    	            String dateOfAppointment = resultSet.getString("DateOfAppointment");
+    	            String description = resultSet.getString("Description");
+    	            String staffID = resultSet.getString("StaffID");
+    	            String status = resultSet.getString("Status");
+
+    	            Object[] rowData = { serviceID, custID, carModel, carName, dateOfAppointment,
+    	                    description, staffID, status, true };
+
+    	            resultList.add(rowData);
+    	        }
+
+    	        Object[][] data = resultList.toArray(new Object[0][]);
+    	        dm.setDataVector(data, header);
+
+    	        // Get the existing JTable from the content pane
+    	        JTable table = (JTable) ((JScrollPane) getContentPane().getComponent(0)).getViewport().getView();
+
+    	        // Update the existing JTable with the new model
+    	        table.setModel(dm);
+    	    } catch (Exception ex) {
+    	        ex.printStackTrace();
+    	    }
+     }
    
     public CarServiceCancel() throws ClassNotFoundException, SQLException {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -68,7 +118,7 @@ public class CarServiceCancel extends JFrame {
         String[] header = { "ServiceID", "CustID", "CarModel", "CarName", "DateOfAppointment", "Description",
                 "StaffID", "Status" };
 
-        String sqlQuery = "SELECT ServiceID, CustID, CarModel, CarName, DateOfAppointment, Description, StaffID, Status FROM car_service Where Status = 'Cancel'";
+        String sqlQuery = "SELECT ServiceID, CustID, CarModel, CarName, DateOfAppointment, Description, StaffID, Status FROM car_service Where Status = 'Cancelled'";
 
         try (
         		Connection conn = MyDatabase.doConnection();
@@ -125,34 +175,12 @@ public class CarServiceCancel extends JFrame {
             btnUpdate.addActionListener(new ActionListener() {
             	public void actionPerformed(ActionEvent e) {
             		DefaultTableModel model = (DefaultTableModel) table.getModel();
-                    int rowCount = model.getRowCount();
-
-            		   // Iterate through each row
-            	        for (int i = 0; i < rowCount; i++) {
-            	            // Check if the status column (index 7) has been modified
-            	            String newStatus = (String) model.getValueAt(i, 7);
-            	 
-
-            	            if (!newStatus.equals("cancelled")) {  // Only update if status is not "Pending"
-            	                // If the status is different from "Pending", update the corresponding row in the database
-            	                String serviceID = (String) model.getValueAt(i, 0);
-            	      
-            	
-            	                
-            	                try {
-            	                    updateStatusInDatabase(serviceID, newStatus);
-            	                } catch (ClassNotFoundException e1) {
-            	                    e1.printStackTrace();
-            	                }
-            	            } 
-            	       
-            	        }
-                       // Refresh the table after updating the database
-                       //refreshTable();
+            		StaffController staffController = new StaffController();
+            		staffController.updateTableCancel(model);
 
             	}
             });
-            btnUpdate.setBounds(241, 391, 103, 37);
+            btnUpdate.setBounds(381, 391, 103, 37);
             contentPane.add(btnUpdate);
             
             JButton btnBack = new JButton("Back\r\n");
@@ -164,34 +192,12 @@ public class CarServiceCancel extends JFrame {
             	}
             });
             btnBack.setFont(new Font("Times New Roman", Font.BOLD, 15));
-            btnBack.setBounds(381, 391, 103, 37);
+            btnBack.setBounds(241, 391, 103, 37);
             contentPane.add(btnBack);
             setVisible(true);
      
         }
     }
-    private void updateStatusInDatabase(String serviceID, String newStatus) throws ClassNotFoundException {
-    	String updateQuery = "UPDATE car_service SET Status = ? WHERE ServiceID = ?";
-
-
-        try (Connection conn = MyDatabase.doConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(updateQuery)) {
-
-            preparedStatement.setString(1, newStatus);
-            preparedStatement.setString(2, serviceID);
- 
-
-            int rowsUpdated = preparedStatement.executeUpdate();
-
-            if (rowsUpdated > 0) {
-               JOptionPane.showMessageDialog(null,"Status updated successfully for ServiceID: " + serviceID);
-            } else {
-                JOptionPane.showMessageDialog(null,"Failed to update status for ServiceID: " + serviceID);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+  
 }
 
